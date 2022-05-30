@@ -1,5 +1,7 @@
 import { Box, Flex, Image, Text } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import axios from "axios";
+import React, { useCallback, useEffect } from "react";
+import { useDropzone } from "react-dropzone";
 import "./App.css";
 
 function App() {
@@ -7,6 +9,29 @@ function App() {
     document.title = "v18";
   }, []);
 
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+
+  useEffect(() => {
+    callApi();
+  }, []);
+
+  const callApi = useCallback(async () => {
+    const formData = new FormData();
+    acceptedFiles && formData.append("file", acceptedFiles[0]);
+    try {
+      const response = await axios({
+        method: "post",
+        url: "https://hungdn.fun/upload.php",
+        data: {
+          file: acceptedFiles[0],
+        },
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   return (
     <Flex
       justifyContent="center"
@@ -22,6 +47,7 @@ function App() {
         bg="white"
         rounded="5rem"
         p="5.2rem"
+        {...getRootProps({ className: "dropzone" })}
       >
         <Flex
           justifyContent="center"
@@ -42,6 +68,8 @@ function App() {
             <Text w="fit-content">Supports: All</Text>
           </Box>
         </Flex>
+
+        <input type="file" {...getInputProps()} />
       </Box>
     </Flex>
   );
