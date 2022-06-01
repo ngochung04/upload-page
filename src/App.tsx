@@ -46,7 +46,6 @@ function App() {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      bg="#e9f3fe"
       w="100vw"
     >
       <Box
