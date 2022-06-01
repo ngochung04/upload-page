@@ -43,14 +43,14 @@ function App() {
 
   return (
     <Flex
+      flexDirection="column"
       justifyContent="center"
       alignItems="center"
       bg="#e9f3fe"
       w="100vw"
-      h="100vh"
     >
       <Box
-        mt="-16rem"
+        mt="4rem"
         w="107.5rem"
         h="38rem"
         bg="white"
@@ -147,6 +147,26 @@ function App() {
           UPLOAD
         </Button>
         <input type="file" {...getInputProps()} />
+      </Box>
+      <Box mt="5rem" w="107.5rem" h="38rem" gap="1rem">
+        {[...Array(36)].map((item, i) => (
+          <Box
+            px="2.4rem"
+            alignItems="center"
+            key={i}
+            h="5.6rem"
+            rounded="full"
+            bg="#FFF"
+            display="inline-flex"
+            w="48%"
+            mt="1.6rem"
+            mx="0.8rem"
+          >
+            <Text fontSize="1.6rem" fontWeight="bold">
+              Item
+            </Text>
+          </Box>
+        ))}
       </Box>
     </Flex>
   );
