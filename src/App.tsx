@@ -1,6 +1,6 @@
-import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import "./App.css";
 
@@ -9,12 +9,8 @@ function App() {
     document.title = "v18";
   }, []);
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
-
-  useEffect(() => {
-    callApi();
-  }, []);
-
+  const { acceptedFiles, getRootProps, getInputProps, rootRef } = useDropzone();
+  const [response, setResponse] = useState<any>(null);
   const callApi = useCallback(async () => {
     const formData = new FormData();
     acceptedFiles && formData.append("file", acceptedFiles[0]);
@@ -27,11 +23,16 @@ function App() {
         },
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log(response);
+      setResponse(response.data);
     } catch (error) {
       console.log(error);
     }
   }, []);
+
+  const handleSend = () => {
+    if (acceptedFiles.length > 0) callApi();
+  };
+
   return (
     <Flex
       justifyContent="center"
@@ -47,9 +48,10 @@ function App() {
         bg="white"
         rounded="5rem"
         p="5.2rem"
-        {...getRootProps({ className: "dropzone" })}
       >
         <Flex
+          {...getRootProps({ className: "dropzone" })}
+          cursor="pointer"
           justifyContent="center"
           alignItems="center"
           flexDirection="column"
@@ -58,17 +60,42 @@ function App() {
           h="100%"
           rounded="2.4rem"
         >
-          <Image src="" />
+          <Box>
+            <Text display="inline-block" fontSize="2.4rem" fontWeight="bold">
+              Drop your file here, or
+            </Text>
+            <Text
+              ml="8px"
+              display="inline-block"
+              fontSize="2.4rem"
+              fontWeight="bold"
+              color="#0E86D4"
+            >
+              browse
+            </Text>
+          </Box>
+          <Text
+            mx="auto"
+            transform="translateY(-5px)"
+            w="fit-content"
+            fontSize="2rem"
+            fontWeight="medium"
+          >
+            Supports: All
+          </Text>
 
-          <Box>
-            <Text display="inline-block">Drop your file here, or</Text>
-            <Text display="inline-block">browse</Text>
-          </Box>
-          <Box>
-            <Text w="fit-content">Supports: All</Text>
-          </Box>
+          <Button
+            onClick={handleSend}
+            color="#0E86D4"
+            mt="20px"
+            p="20px 28px"
+            fontSize="2rem"
+            fontWeight="medium"
+          >
+            upload
+          </Button>
         </Flex>
-
+        {response}
         <input type="file" {...getInputProps()} />
       </Box>
     </Flex>
