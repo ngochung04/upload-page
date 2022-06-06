@@ -26,28 +26,26 @@ function App() {
   const [progress, setProgress] = useState(0);
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
   const [response, setResponse] = useState<Res>();
-  const callApi = useCallback(async () => {
+  const callApi = async () => {
     const formData = new FormData();
-    acceptedFiles && formData.append("file", acceptedFiles[0]);
+    formData.append("file", acceptedFiles[0]);
     try {
       const response = await axios({
         method: "post",
         url: "https://hungdn.fun/upload.php",
-        data: {
-          file: acceptedFiles[0],
-        },
+        data: formData,
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
           const { loaded, total } = progressEvent;
-
           setProgress(Math.round((loaded / total) * 100));
         },
       });
+
       setResponse(response.data);
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  };
 
   const handleSend = useCallback(() => {
     setProgress(0);
