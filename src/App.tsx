@@ -1,4 +1,11 @@
-import { Box, Button, Flex, LinkOverlay, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  LinkOverlay,
+  Progress,
+  Text,
+} from "@chakra-ui/react";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -16,6 +23,7 @@ function App() {
     document.title = "v18";
   }, []);
 
+  const [progress, setProgress] = useState(0);
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
   const [response, setResponse] = useState<Res>();
   const callApi = useCallback(async () => {
@@ -29,6 +37,11 @@ function App() {
           file: acceptedFiles[0],
         },
         headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (progressEvent) => {
+          const { loaded, total } = progressEvent;
+
+          setProgress(Math.round((loaded / total) * 100));
+        },
       });
       setResponse(response.data);
     } catch (error) {
@@ -37,8 +50,8 @@ function App() {
   }, []);
 
   const handleSend = useCallback(() => {
+    setProgress(0);
     if (acceptedFiles.length > 0) callApi();
-    console.log(acceptedFiles[0]);
   }, [acceptedFiles]);
 
   return (
@@ -129,6 +142,11 @@ function App() {
             </>
           )}
         </Flex>
+        <Progress
+          hasStripe
+          value={progress}
+          hidden={acceptedFiles.length === 0}
+        />
         <Button
           hidden={acceptedFiles.length === 0}
           onClick={handleSend}
